@@ -1,0 +1,28 @@
+# Ignore possible vevn python stuff
+bin/
+include/
+lib/
+lib64/
+share/
+pyenv.cfg
+__pycache__
+
+# Ignore logging
+logs
+
+# Ignore sensitive file
+config.yaml
+
+# Ignore venv stuff and packages
+pyvenv.cfg
+argparse
+lib64
+requests
+time
+yaml
+
+# Generated error files!
+*.html
+
+# vscode stuff
+.vscode
