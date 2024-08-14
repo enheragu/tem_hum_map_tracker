@@ -8,11 +8,17 @@ The script is supposed to run under a Linux environment making use of Python3.
 
 ## Installation
 
-All the process can be done into a virtual environment. Create one and activate it with the following command (or just ignore these an execute without venv):
+All the process can be done into a virtual environment. But for some reason with cmake opencv cannot be installed with pip, install with apt and make sure the venv can work with it. Then make the venv inherit the system packages:
 
 ```sh
-    python3 -m venv path_venv
-    source path_venv/bin/activate
+    sudo apt install python-opencv
+```
+
+Create the venv inheriting from system and activate it with the following commands (or just ignore these an execute without venv):
+
+```sh
+    python3 -m venv --system-site-packages venv
+    source venv/bin/activate
 ```
 
 The environment can be deactivated as follows:
@@ -23,15 +29,9 @@ The environment can be deactivated as follows:
 Clone the repository in a given location and install its requirementes with the following command, executed from the root folder of the repository. You can check the requirements file to check the libraries that will be installed into your system.
 
 ```sh
-    pip3 install -r requirements
+    pip3 install --upgrade pip setuptools wheel
+    pip3 install -r requirements 
 ```
-
-The script makes use of chromium driver, make sure you have it installed:
-
-```sh
-    sudo apt-get install chromium-chromedriver
-```
->Note: Currently Google does not support ARM platforms (Raspberry), so automatic installation through chromedriver-py is not supported
 
 
 ## Configuration
@@ -53,10 +53,6 @@ The config file is provided to the script through an argument and should contain
     config: "./config/config.yaml"
     ntfy_topic: "topic_name"
     log_path: "./logs"
-
-    # How many hours the heater should be on during each day 
-    # [monday, tuesday, wednesday, ..., saturday, sunday]
-    on_hours: [2,2,2,2,2,4,4]
 ```
 
 Note that `ntfy_topic` can be set as `None` to completely deactivate push notifications.

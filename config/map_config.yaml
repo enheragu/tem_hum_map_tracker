@@ -1,0 +1,153 @@
+cortina_salon:
+  humedad:
+    last_update: '2024-08-14 08:48:22.475'
+    state: '76'
+    topic: homeassistant/sensor/cortina_salon_humedad/state
+  temperatura:
+    last_update: '2024-08-14 08:48:22.261'
+    state: '27.9'
+    topic: homeassistant/sensor/cortina_salon_temperatura/state
+telefonillo:
+  humedad:
+    last_update: '2024-08-14 08:48:24.510'
+    state: '70'
+    topic: homeassistant/sensor/telefonillo_humedad/state
+  temperatura:
+    last_update: '2024-08-14 08:48:19.547'
+    state: '29.6'
+    topic: homeassistant/sensor/telefonillo_temperatura/state
+temperature_humidity_sensor:
+  humedad:
+    last_update: '2024-08-14 08:48:18.117'
+    state: '0.0'
+    topic: homeassistant/sensor/temperature_humidity_sensor_humedad/state
+  temperatura:
+    last_update: '2024-08-14 08:48:18.050'
+    state: '-20.0'
+    topic: homeassistant/sensor/temperature_humidity_sensor_temperatura/state
+temperature_humidity_sensor_2:
+  humedad:
+    last_update: '2024-08-14 08:48:18.238'
+    state: '0.0'
+    topic: homeassistant/sensor/temperature_humidity_sensor_2_humedad/state
+  temperatura:
+    last_update: '2024-08-14 08:48:18.182'
+    state: '-20.0'
+    topic: homeassistant/sensor/temperature_humidity_sensor_2_temperatura/state
+temperature_humidity_sensor_3:
+  humedad:
+    last_update: '2024-08-14 08:48:18.751'
+    state: '0.0'
+    topic: homeassistant/sensor/temperature_humidity_sensor_3_humedad/state
+  temperatura:
+    last_update: '2024-08-14 08:48:18.653'
+    state: '-20.0'
+    topic: homeassistant/sensor/temperature_humidity_sensor_3_temperatura/state
+temperature_humidity_sensor_4:
+  humedad:
+    last_update: '2024-08-14 08:48:18.948'
+    state: '0.0'
+    topic: homeassistant/sensor/temperature_humidity_sensor_4_humedad/state
+  temperatura:
+    last_update: '2024-08-14 08:48:18.855'
+    state: '-20.0'
+    topic: homeassistant/sensor/temperature_humidity_sensor_4_temperatura/state
+th_bano_entrada:
+  humedad:
+    last_update: '2024-08-14 08:48:19.165'
+    state: '72.0'
+    topic: homeassistant/sensor/th_bano_entrada_humedad/state
+  temperatura:
+    last_update: '2024-08-14 08:48:19.051'
+    state: '28.6'
+    topic: homeassistant/sensor/th_bano_entrada_temperatura/state
+th_bano_habitacion:
+  humedad:
+    last_update: '2024-08-14 08:48:19.422'
+    state: '70.0'
+    topic: homeassistant/sensor/th_bano_habitacion_humedad/state
+  temperatura:
+    last_update: '2024-08-14 08:48:19.299'
+    state: '28.7'
+    topic: homeassistant/sensor/th_bano_habitacion_temperatura/state
+th_cocina:
+  humedad:
+    last_update: '2024-08-14 08:48:22.067'
+    state: '65'
+    topic: homeassistant/sensor/th_cocina_humedad/state
+  temperatura:
+    last_update: '2024-08-14 08:48:21.873'
+    state: '33.0'
+    topic: homeassistant/sensor/th_cocina_temperatura/state
+th_h_invitados:
+  humedad:
+    last_update: '2024-08-14 08:48:19.986'
+    state: '66'
+    topic: homeassistant/sensor/th_h_invitados_humedad/state
+  temperatura:
+    last_update: '2024-08-14 08:48:19.849'
+    state: '30.9'
+    topic: homeassistant/sensor/th_h_invitados_temperatura/state
+th_impresora:
+  humedad:
+    last_update: '2024-08-14 08:48:20.305'
+    state: '72'
+    topic: homeassistant/sensor/th_impresora_humedad/state
+  temperatura:
+    last_update: '2024-08-14 08:48:20.163'
+    state: '31.1'
+    topic: homeassistant/sensor/th_impresora_temperatura/state
+th_pasillo:
+  humedad:
+    last_update: '2024-08-14 08:48:20.609'
+    state: '69'
+    topic: homeassistant/sensor/th_pasillo_humedad/state
+  temperatura:
+    last_update: '2024-08-14 08:48:20.475'
+    state: '30.6'
+    topic: homeassistant/sensor/th_pasillo_temperatura/state
+th_plantitas_salon:
+  humedad:
+    last_update: '2024-08-14 08:48:20.957'
+    state: '66'
+    topic: homeassistant/sensor/th_plantitas_salon_humedad/state
+  temperatura:
+    last_update: '2024-08-14 08:48:20.782'
+    state: '30.3'
+    topic: homeassistant/sensor/th_plantitas_salon_temperatura/state
+th_terraza:
+  humedad:
+    last_update: '2024-08-14 08:48:21.308'
+    state: '77'
+    topic: homeassistant/sensor/th_terraza_humedad/state
+  temperatura:
+    last_update: '2024-08-14 08:48:21.130'
+    state: '28.2'
+    topic: homeassistant/sensor/th_terraza_temperatura/state
+th_ventana_habitacion:
+  humedad:
+    last_update: '2024-08-14 08:48:18.553'
+    state: '74.0'
+    topic: homeassistant/sensor/th_ventana_habitacion_humedad/state
+  temperatura:
+    last_update: '2024-08-14 08:48:18.467'
+    state: '27.7'
+    topic: homeassistant/sensor/th_ventana_habitacion_temperatura/state
+th_ventana_salon:
+  humedad:
+    last_update: '2024-08-14 08:48:18.389'
+    state: '86.0'
+    topic: homeassistant/sensor/th_ventana_salon_humedad/state
+  temperatura:
+    last_update: '2024-08-14 08:48:18.312'
+    state: '26.4'
+    topic: homeassistant/sensor/th_ventana_salon_temperatura/state
+tv_remote:
+  humedad:
+    last_update: '2024-08-14 08:48:21.688'
+    state: '70'
+    topic: homeassistant/sensor/tv_remote_humedad/state
+  temperatura:
+    last_update: '2024-08-14 08:48:21.497'
+    state: '30.4'
+    topic: homeassistant/sensor/tv_remote_temperatura/state

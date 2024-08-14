@@ -1,4 +1,7 @@
-beautifulsoup4
+wheel
 paho-mqtt
 pyyaml
 requests
+cmake
+numpy
+# opencv-python

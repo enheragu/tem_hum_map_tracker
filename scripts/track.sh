@@ -20,7 +20,7 @@ cd $SCRIPT_PATH/../ && source ./venv/bin/activate
 
 ## Run checkin with input options
 echo "[track.sh] Run script"
-cd $SCRIPT_PATH/../ && ./src/main.py "$@" -cfg ./config/config.yaml
+cd $SCRIPT_PATH/../ && ./src/main.py "$@" -cfg ./config/config.yaml -mcfg ./config/map_config.yaml
 
 echo "[track.sh] end"
 date
