@@ -2,8 +2,6 @@
 # encoding: utf-8
 
 import os
-import yaml
-from yaml.loader import SafeLoader
 
 # User interface
 import argparse
@@ -12,25 +10,7 @@ import argparse
 from map_handler import setup_map_cfg_path
 from mqtt_node import subscribe_client, stop_client
 from log_config import DEFAULT_LOG_PATH, DEFAULT_LOG_TOPIC, DEFAULT_LOG_LEVEL, configureLogger, log_screen
-
-
-
-####################
-# HELPER FUNCTIONS #
-####################
-"""
-    Parses configuration yaml file and returns data dict.
-"""
-def getYAMLConfig(cfg_file):
-    if not os.path.exists(cfg_file):
-        log_screen(f"File requested ({cfg_file}) does not exist.", level = "WARNING", notify = False)
-        return {}
-    # Parse configuration
-    with open(cfg_file) as file:
-        data = yaml.load(file, Loader=SafeLoader)
-        return data
-    
-
+from yaml_utils import parseYaml
 
 """
     Gets user arguments and parses configuration file to check that input data is valid. Sets up 
@@ -50,7 +30,7 @@ def getUserOptionsAndSetup():
     user_input = vars(parser.parse_args())
     
     # Parse configuration
-    data = getYAMLConfig(user_input["config"])
+    data = parseYaml(user_input["config"])
     DEFAULT_LOG_TOPIC = data["ntfy_topic"]
     DEFAULT_LOG_PATH = data["log_path"]
     LOGGING_FILE_PATH = data["log_path"] + "/energy_script_log.log"
