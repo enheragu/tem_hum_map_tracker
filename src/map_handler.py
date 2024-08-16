@@ -93,10 +93,7 @@ def plotOriginalData(img, positions, values, units = ""):
         cv2.putText(output_img, text, (text_x, text_y), font, font_scale, font_color, font_thickness)
         cv2.putText(output_img, text2, (text_x2, text_y2), font, font_scale, font_color, font_thickness)
         
-
     return output_img
-
-
 
 def load_temperature_heatmaps(media_path):
     global heatmap_dict, original_image
@@ -124,7 +121,7 @@ def load_temperature_heatmaps(media_path):
         heatmap_dict[key] = np.load(heatmap_path)
         log_screen(f"\t· Parsed {key} heatmap", level = "INFO", notify = False)
 
-    denominator_heatmap = np.load(os.path.join(media_path,'denominator.npy'))
+    # denominator_heatmap = np.load(os.path.join(media_path,'denominator.npy'))
 
     for sensor_key in data_dict['sensors'].keys():
         if sensor_key not in heatmap_dict:
@@ -207,14 +204,14 @@ def update_map(sensor_data_key = 'temperatura', display_debug = False):
 
 
     first_heatmap = next(iter(heatmap_dict.values()))
-    integrated_heatmap = np.zeros_like(first_heatmap, dtype=np.float64)
+    integrated_heatmap = np.zeros_like(first_heatmap, dtype=np.float32)
 
     # Accumulates numerator and denominator to be averaged later
-    num = np.zeros_like(first_heatmap, dtype=np.float64)
-    denominator_heatmap = np.zeros_like(first_heatmap, dtype=np.float64)
+    num = np.zeros_like(first_heatmap, dtype=np.float32)
+    denominator_heatmap = np.zeros_like(first_heatmap, dtype=np.float32)
     for sensor_key, sensor_data in data_dict['sensors'].items():
         value = sensor_data[sensor_data_key]['state']
-        heatmap = heatmap_dict[sensor_key].copy().astype(np.float64)
+        heatmap = heatmap_dict[sensor_key].copy().astype(np.float32)
         num = num + heatmap*value
         denominator_heatmap = denominator_heatmap + heatmap
 
@@ -226,12 +223,11 @@ def update_map(sensor_data_key = 'temperatura', display_debug = False):
         plt.imshow(denominator_heatmap)
         plt.colorbar()
 
-    
     integrated_heatmap = np.divide(num, denominator_heatmap, out=np.zeros_like(num), where=denominator_heatmap != 0)
-    
+    del num, denominator_heatmap
     # cv2.imshow(f'Divided {sensor_data_key}', integrated_heatmap)
 
-    gray_image = original_image
+    gray_image = original_image.copy()
     if gray_image.shape != integrated_heatmap.shape:
         gray_image = cv2.resize(gray_image, (integrated_heatmap.shape[1], integrated_heatmap.shape[0]))
     
@@ -261,18 +257,12 @@ def update_map(sensor_data_key = 'temperatura', display_debug = False):
 
     integrated_heatmap = cv2.applyColorMap(integrated_heatmap, range_configuration[sensor_data_key]['colormap'])
     integrated_heatmap[gray_image<127] = (0,0,0)
-    
 
     integrated_heatmap = cv2.resize(integrated_heatmap, (integrated_heatmap.shape[1]*final_scaling, integrated_heatmap.shape[0]*final_scaling))
     integrated_heatmap = plotOriginalData(integrated_heatmap,positions, values, units=range_configuration[sensor_data_key]['units'])
     
     if display_debug:
         cv2.imshow(f'Heatmap {sensor_data_key}', integrated_heatmap)
-        # num = rescaleChannel(num, np.max(num), 255)
-        # dem = rescaleChannel(denominator_heatmap, np.max(dem), 255)
-        # cv2.imshow(f'num {sensor_data_key}', num)
-        # cv2.imshow(f'dem {sensor_data_key}', dem)
-        # cv2.imshow(f'Map {sensor_data_key}', gray_image)
         cv2.pollKey()
         plt.show()
     

@@ -236,10 +236,10 @@ def computePreprocessedHeatmaps():
     denominator_heatmap = None
 
     for heatmap_path in heatmap_files_path:
-        heatmap = cv2.imread(heatmap_path, cv2.IMREAD_GRAYSCALE).astype(np.float64)
+        heatmap = cv2.imread(heatmap_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
         
         if denominator_heatmap is None:
-            denominator_heatmap = np.zeros_like(heatmap, dtype=np.float64)
+            denominator_heatmap = np.zeros_like(heatmap, dtype=np.float32)
 
         # Power is applied to enhance influence of the sensor in its proximal area
         heatmap = (heatmap**2)
