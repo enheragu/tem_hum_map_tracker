@@ -266,7 +266,7 @@ def update_map(sensor_data_key = 'temperatura', display_debug = False):
         cv2.pollKey()
         plt.show()
     
-    integrated_heatmap = cv2.rotate(integrated_heatmap, cv2.ROTATE_90_COUNTERCLOCKWISE)
+    # integrated_heatmap = cv2.rotate(integrated_heatmap, cv2.ROTATE_90_COUNTERCLOCKWISE)
     integrated_heatmap = timestampToImage(integrated_heatmap)
 
     return integrated_heatmap

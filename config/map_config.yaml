@@ -1,160 +1,160 @@
 map_path: ./media/map.png
 scale:
   distance_cm: 93.0
-  distance_pixels: 88.0056816347672
+  distance_pixels: 89.00561780022652
 sensors:
   cortina_salon:
     humedad:
-      last_update: '2024-08-16 01:12:34.293'
+      last_update: '2024-08-16 23:17:10.934'
       state: 61.0
       topic: homeassistant/sensor/cortina_salon_humedad/state
-    position_px: [1668, 290, 91]
+    position_px: [306, 57, 91]
     position_z_cm: 217
     temperatura:
-      last_update: '2024-08-16 01:12:34.270'
-      state: 25.3
+      last_update: '2024-08-16 23:17:10.925'
+      state: 26.9
       topic: homeassistant/sensor/cortina_salon_temperatura/state
   telefonillo:
     humedad:
-      last_update: '2024-08-16 01:03:02.974'
-      state: 55.0
+      last_update: '2024-08-16 23:17:10.807'
+      state: 59.0
       topic: homeassistant/sensor/telefonillo_humedad/state
-    position_px: [1191, 307, 60]
+    position_px: [309, 531, 60]
     position_z_cm: 144
     temperatura:
-      last_update: '2024-08-16 01:03:02.929'
-      state: 28.2
+      last_update: '2024-08-16 23:17:10.801'
+      state: 28.7
       topic: homeassistant/sensor/telefonillo_temperatura/state
   th_bano_entrada:
     humedad:
-      last_update: '2024-08-16 00:32:07.328'
-      state: 61.0
+      last_update: '2024-08-16 23:17:10.781'
+      state: 63.0
       topic: homeassistant/sensor/th_bano_entrada_humedad/state
-    position_px: [1060, 439, 44]
+    position_px: [440, 662, 44]
     position_z_cm: 107
     temperatura:
-      last_update: '2024-08-16 00:32:07.319'
-      state: 27.3
+      last_update: '2024-08-16 23:17:10.774'
+      state: 27.2
       topic: homeassistant/sensor/th_bano_entrada_temperatura/state
   th_bano_habitacion:
     humedad:
-      last_update: '2024-08-16 01:01:50.034'
-      state: 60.0
+      last_update: '2024-08-16 23:17:10.794'
+      state: 63.0
       topic: homeassistant/sensor/th_bano_habitacion_humedad/state
-    position_px: [250, 377, 49]
+    position_px: [379, 1473, 49]
     position_z_cm: 117
     temperatura:
-      last_update: '2024-08-16 00:32:07.339'
+      last_update: '2024-08-16 23:17:10.788'
       state: 27.3
       topic: homeassistant/sensor/th_bano_habitacion_temperatura/state
   th_cocina:
     humedad:
-      last_update: '2024-08-16 01:12:28.439'
-      state: 56.0
+      last_update: '2024-08-16 23:17:10.918'
+      state: 59.0
       topic: homeassistant/sensor/th_cocina_humedad/state
-    position_px: [1377, 378, 47]
+    position_px: [385, 343, 47]
     position_z_cm: 114
     temperatura:
-      last_update: '2024-08-16 01:12:28.423'
+      last_update: '2024-08-16 23:17:10.911'
       state: 31.6
       topic: homeassistant/sensor/th_cocina_temperatura/state
   th_h_invitados:
     humedad:
-      last_update: '2024-08-16 00:32:07.447'
+      last_update: '2024-08-16 23:17:10.819'
       state: 58.0
       topic: homeassistant/sensor/th_h_invitados_humedad/state
-    position_px: [800, 97, 32]
+    position_px: [97, 894, 32]
     position_z_cm: 77
     temperatura:
-      last_update: '2024-08-16 00:32:07.436'
-      state: 29.5
+      last_update: '2024-08-16 23:17:10.813'
+      state: 29.8
       topic: homeassistant/sensor/th_h_invitados_temperatura/state
   th_habitacion:
     humedad:
-      last_update: '2024-08-16 00:32:07.468'
-      state: 53.0
+      last_update: '2024-08-16 23:17:10.834'
+      state: 54.0
       topic: homeassistant/sensor/th_habitacion_humedad/state
-    position_px: [66, 152, 18]
+    position_px: [152, 1648, 18]
     position_z_cm: 44
     temperatura:
-      last_update: '2024-08-16 00:49:58.944'
-      state: 29.2
+      last_update: '2024-08-16 23:17:10.827'
+      state: 29.6
       topic: homeassistant/sensor/th_habitacion_temperatura/state
   th_impresora:
     humedad:
-      last_update: '2024-08-16 00:32:07.490'
-      state: 60.0
+      last_update: '2024-08-16 23:17:10.850'
+      state: 59.0
       topic: homeassistant/sensor/th_impresora_humedad/state
-    position_px: [365, 296, 46]
+    position_px: [283, 1350, 46]
     position_z_cm: 110
     temperatura:
-      last_update: '2024-08-16 01:12:33.219'
-      state: 30.4
+      last_update: '2024-08-16 23:17:10.842'
+      state: 30.5
       topic: homeassistant/sensor/th_impresora_temperatura/state
   th_pasillo:
     humedad:
-      last_update: '2024-08-16 01:12:34.723'
-      state: 55.0
+      last_update: '2024-08-16 23:17:10.864'
+      state: 58.0
       topic: homeassistant/sensor/th_pasillo_humedad/state
-    position_px: [560, 457, 26]
+    position_px: [460, 1161, 26]
     position_z_cm: 64
     temperatura:
-      last_update: '2024-08-16 00:32:07.501'
-      state: 29.1
+      last_update: '2024-08-16 23:17:10.857'
+      state: 29.9
       topic: homeassistant/sensor/th_pasillo_temperatura/state
   th_plantitas_salon:
     humedad:
-      last_update: '2024-08-16 00:34:55.613'
-      state: 55.0
+      last_update: '2024-08-16 23:17:10.878'
+      state: 56.0
       topic: homeassistant/sensor/th_plantitas_salon_humedad/state
-    position_px: [1210, 182, 30]
+    position_px: [255, 501, 30]
     position_z_cm: 73
     temperatura:
-      last_update: '2024-08-16 00:49:55.562'
-      state: 28.5
+      last_update: '2024-08-16 23:17:10.871'
+      state: 29.7
       topic: homeassistant/sensor/th_plantitas_salon_temperatura/state
   th_terraza:
     humedad:
-      last_update: '2024-08-16 01:11:33.115'
-      state: 64.0
+      last_update: '2024-08-16 23:17:10.891'
+      state: 60.0
       topic: homeassistant/sensor/th_terraza_humedad/state
-    position_px: [1594, 384, 52]
+    position_px: [384, 128, 52]
     position_z_cm: 125
     temperatura:
-      last_update: '2024-08-16 01:11:33.104'
-      state: 24.9
+      last_update: '2024-08-16 23:17:10.884'
+      state: 27.8
       topic: homeassistant/sensor/th_terraza_temperatura/state
   th_ventana_habitacion:
     humedad:
-      last_update: '2024-08-16 00:39:38.271'
+      last_update: '2024-08-16 23:17:10.767'
       state: 60.0
       topic: homeassistant/sensor/th_ventana_habitacion_humedad/state
-    position_px: [362, 111, 62]
+    position_px: [104, 1344, 62]
     position_z_cm: 149
     temperatura:
-      last_update: '2024-08-16 00:39:38.265'
-      state: 26.5
+      last_update: '2024-08-16 23:17:10.760'
+      state: 27.2
       topic: homeassistant/sensor/th_ventana_habitacion_temperatura/state
   th_ventana_salon:
     humedad:
-      last_update: '2024-08-16 01:05:19.812'
-      state: 69.0
+      last_update: '2024-08-16 23:17:10.753'
+      state: 66.0
       topic: homeassistant/sensor/th_ventana_salon_humedad/state
-    position_px: [1682, 112, 40]
+    position_px: [116, 37, 40]
     position_z_cm: 96
     temperatura:
-      last_update: '2024-08-16 01:05:19.805'
-      state: 23.2
+      last_update: '2024-08-16 23:17:10.745'
+      state: 25.6
       topic: homeassistant/sensor/th_ventana_salon_temperatura/state
   tv_remote:
     humedad:
-      last_update: '2024-08-16 01:12:36.138'
-      state: 56.0
+      last_update: '2024-08-16 23:17:10.905'
+      state: 57.0
       topic: homeassistant/sensor/tv_remote_humedad/state
-    position_px: [1426, 341, 17]
+    position_px: [329, 324, 17]
     position_z_cm: 42
     temperatura:
-      last_update: '2024-08-16 01:03:04.914'
-      state: 28.4
+      last_update: '2024-08-16 23:17:10.898'
+      state: 29.7
       topic: homeassistant/sensor/tv_remote_temperatura/state
 temperature_in_height: 120
