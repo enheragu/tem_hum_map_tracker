@@ -14,6 +14,7 @@ from log_config import log_screen
 data_dict = None
 heatmap_dict = {}
 original_image = None
+denominator_heatmap = None
 default_map_config_path = "./../config/map_config.yaml"
 default_media_path = "./../media/"
 default_map_path = f"{default_media_path}map.png"
@@ -99,7 +100,7 @@ def plotOriginalData(img, positions, values, units = ""):
 def load_temperature_heatmaps(media_path):
     global heatmap_dict, original_image
     global default_media_path, default_map_path
-    global data_dict
+    global data_dict, denominator_heatmap
 
     log_screen(f"Updating heatmap templates from {media_path}:", level = "INFO", notify = False)
     if media_path is not None:
@@ -113,14 +114,16 @@ def load_temperature_heatmaps(media_path):
 
     heatmap_files_path = []
     for file in os.listdir(media_path):
-        if file.startswith('map_') and file.endswith('.png') and\
+        if file.startswith('map_') and file.endswith('.png.npy') and\
            'debug' not in file:
-            heatmap_files_path.append(os.path.join(media_path+file))
+            heatmap_files_path.append(os.path.join(media_path,file))
     
     for heatmap_path in heatmap_files_path:
-        key = heatmap_path.split('/')[-1].replace('map_','').replace('.png',"")
-        heatmap_dict[key] = cv2.imread(heatmap_path, cv2.IMREAD_GRAYSCALE)
+        key = heatmap_path.split('/')[-1].replace('map_','').replace('.png.npy',"")
+        heatmap_dict[key] = np.load(heatmap_path)
         log_screen(f"\t· Parsed {key} heatmap", level = "INFO", notify = False)
+
+    denominator_heatmap = np.load(os.path.join(media_path,'denominator.npy'))
 
     for sensor_key in data_dict['sensors'].keys():
         if sensor_key not in heatmap_dict:
@@ -162,7 +165,7 @@ def rescale_channel_minmax(channel, min_value=None, max_value=None, new_min=0, n
     return channel_rescaled, min_value, max_value
 
 def update_map(sensor_data_key = 'temperatura', display_debug = False):
-    global heatmap_dict, original_image, data_dict, temperature_range
+    global heatmap_dict, original_image, data_dict, temperature_range, denominator_heatmap
     final_scaling = 4
 
     positions = {}
@@ -179,24 +182,19 @@ def update_map(sensor_data_key = 'temperatura', display_debug = False):
 
     # Accumulates numerator and denominator to be averaged later
     num = np.zeros_like(first_heatmap, dtype=float)
-    dem = np.zeros_like(first_heatmap, dtype=float)
-
     for sensor_key, sensor_data in data_dict['sensors'].items():
         value = sensor_data[sensor_data_key]['state']
         heatmap = heatmap_dict[sensor_key].copy().astype(float)
         # Power is applied to enhance influence of the sensor in its proximal area
-        num = num + (heatmap**5)*value
-        dem = dem + (heatmap**5)
+        num = num + heatmap*value
 
         # num = rescaleChannel(num, np.max(num), 255)
-        # dem = rescaleChannel(dem, np.max(dem), 255)
         # cv2.imshow(f'Heatmap {sensor_key}; state: {value}', heatmap_dict[sensor_key])
         # cv2.imshow(f'num {sensor_key}; state: {value}', num)
-        # cv2.imshow(f'dem {sensor_key}; state: {value}', dem)
         # break
 
     
-    integrated_heatmap = np.divide(num, dem, out=np.zeros_like(num), where=dem != 0)
+    integrated_heatmap = np.divide(num, denominator_heatmap, out=np.zeros_like(num), where=denominator_heatmap != 0)
     
     # cv2.imshow(f'Divided {sensor_data_key}', integrated_heatmap)
 
@@ -238,7 +236,7 @@ def update_map(sensor_data_key = 'temperatura', display_debug = False):
     if display_debug:
         cv2.imshow(f'Heatmap {sensor_data_key}', integrated_heatmap)
         # num = rescaleChannel(num, np.max(num), 255)
-        # dem = rescaleChannel(dem, np.max(dem), 255)
+        # dem = rescaleChannel(denominator_heatmap, np.max(dem), 255)
         # cv2.imshow(f'num {sensor_data_key}', num)
         # cv2.imshow(f'dem {sensor_data_key}', dem)
         # cv2.imshow(f'Map {sensor_data_key}', gray_image)

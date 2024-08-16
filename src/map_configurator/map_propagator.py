@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # encoding: utf-8
 
+import os
+
 import threading
 import cv2
 import numpy as np
@@ -229,21 +231,23 @@ def computePreprocessedHeatmaps():
     for file in os.listdir(heatmap_intermediate_path):
         if file.startswith('map_') and file.endswith('.png') and\
            'debug' not in file:
-            heatmap_files_path.append(os.path.join(media_path+file))
+            heatmap_files_path.append(os.path.join(heatmap_intermediate_path,file))
     
-    first_heatmap = next(iter(heatmap_dict.values()))
-    denominator_heatmap = np.zeros_like(first_heatmap, dtype=float)
+    denominator_heatmap = None
 
     for heatmap_path in heatmap_files_path:
         heatmap = cv2.imread(heatmap_path, cv2.IMREAD_GRAYSCALE)
+        
+        if denominator_heatmap is None:
+            denominator_heatmap = np.zeros_like(heatmap, dtype=float)
 
         heatmap = (heatmap**5)
         denominator_heatmap = denominator_heatmap + (heatmap**5)
 
         output_path = heatmap_path.replace(heatmap_intermediate_path,media_path)
-        numpy.save(output_path, heatmap)
+        np.save(output_path, heatmap)
 
-    numpy.save(os.path.join(media_path, 'denominator'), denominator_heatmap)
+    np.save(os.path.join(media_path, 'denominator'), denominator_heatmap)
     
 
 
