@@ -36,7 +36,7 @@ def getUserOptionsAndSetup():
     data = parseYaml(user_input["config"])
     DEFAULT_LOG_TOPIC = data["ntfy_topic"]
     DEFAULT_LOG_PATH = data["log_path"]
-    LOGGING_FILE_PATH = data["log_path"] + "/energy_script_log.log"
+    LOGGING_FILE_PATH = data["log_path"] + "/map_generation_log.log"
 
     log_screen(f"Notifications will be sent to '{DEFAULT_LOG_TOPIC}' topic", level = "DEBUG")
     log_screen(f"Logging will be stored in {LOGGING_FILE_PATH}", level = "DEBUG")
