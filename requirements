@@ -2,9 +2,9 @@ wheel
 paho-mqtt
 pyyaml
 requests
-cmake
 numpy
-scipy
 matplotlib
-tqdm
+# cmake
+# scipy
+# tqdm
 # opencv-python
