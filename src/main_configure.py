@@ -4,10 +4,11 @@
 import cv2
 
 from map_configurator.map_configurator import configureSensorAndMapPosition
-from map_configurator.map_propagator import propagateHeatmaps
+from map_configurator.map_propagator import propagateHeatmaps, computePreprocessedHeatmaps
 
 
 if __name__ == "__main__":
-    # configureSensorAndMapPosition()
+    configureSensorAndMapPosition()
     propagateHeatmaps()
+    computePreprocessedHeatmaps()
     cv2.destroyAllWindows()

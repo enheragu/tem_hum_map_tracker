@@ -23,7 +23,7 @@ map_cfg = "./config/map_config.yaml"
 media_path = "./media/"
 heatmap_intermediate_path = f"{media_path}/raw_heatmaps/"
 map_im = f"{media_path}/map.png"
-grid_size_cm = 4
+grid_size_cm = 8
 
 def scale_map(occupancy_map, scale_factor):
     map = occupancy_map.copy()
@@ -175,7 +175,7 @@ def process_sensor(sensor_data):
     key, data, config_data, scaled_map, map_im, scale_factor, grid_size_cm = sensor_data
     start_point = scale_point(data['position_px'], scale_factor)
     distances = get_distance_map(map=scaled_map, start_node=start_point, distance_between_nodes=grid_size_cm, 
-                         key=key, scale_factor=scale_factor, output_path=os.path.joint(heatmap_intermediate_path, f'map_{key}_debug.png'))
+                         key=key, scale_factor=scale_factor, output_path=os.path.join(heatmap_intermediate_path, f'map_{key}_debug.png'))
     distance_image_bgr = distances_to_image(distances, scaled_map)
 
     # Mostrar la imagen
@@ -187,7 +187,7 @@ def process_sensor(sensor_data):
     # cv2.pollKey()
     
     # Opcionalmente, guardar la imagen en un archivo
-    output_path = map_im.replace('.png', f'_{key}.png')
+    output_path = os.path.join(heatmap_intermediate_path, f'map_{key}.png')
     cv2.imwrite(output_path, distance_image_bgr)
     print(f"Stored heat map in {output_path}")
 
@@ -254,6 +254,6 @@ def computePreprocessedHeatmaps():
 
 
 if __name__ == "__main__":
-    # propagateHeatmaps()
+    propagateHeatmaps()
     computePreprocessedHeatmaps()
     cv2.destroyAllWindows()
