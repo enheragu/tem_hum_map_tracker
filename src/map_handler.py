@@ -166,7 +166,7 @@ def rescale_channel_minmax(channel, min_value=None, max_value=None, new_min=0, n
 
 def update_map(sensor_data_key = 'temperatura', display_debug = False):
     global heatmap_dict, original_image, data_dict, temperature_range, denominator_heatmap
-    final_scaling = 4
+    final_scaling = 3
 
     positions = {}
     values = {}
@@ -178,20 +178,24 @@ def update_map(sensor_data_key = 'temperatura', display_debug = False):
 
 
     first_heatmap = next(iter(heatmap_dict.values()))
-    integrated_heatmap = np.zeros_like(first_heatmap, dtype=float)
+    integrated_heatmap = np.zeros_like(first_heatmap, dtype=np.float64)
 
     # Accumulates numerator and denominator to be averaged later
-    num = np.zeros_like(first_heatmap, dtype=float)
+    num = np.zeros_like(first_heatmap, dtype=np.float64)
+    denominator_heatmap = np.zeros_like(first_heatmap, dtype=np.float64)
     for sensor_key, sensor_data in data_dict['sensors'].items():
         value = sensor_data[sensor_data_key]['state']
-        heatmap = heatmap_dict[sensor_key].copy().astype(float)
-        # Power is applied to enhance influence of the sensor in its proximal area
+        heatmap = heatmap_dict[sensor_key].copy().astype(np.float64)
         num = num + heatmap*value
+        denominator_heatmap = denominator_heatmap + heatmap
 
-        # num = rescaleChannel(num, np.max(num), 255)
-        # cv2.imshow(f'Heatmap {sensor_key}; state: {value}', heatmap_dict[sensor_key])
-        # cv2.imshow(f'num {sensor_key}; state: {value}', num)
-        # break
+    if display_debug:
+        plt.figure("Numerator")
+        plt.imshow(num)
+        plt.colorbar()
+        plt.figure("Denominator")
+        plt.imshow(denominator_heatmap)
+        plt.colorbar()
 
     
     integrated_heatmap = np.divide(num, denominator_heatmap, out=np.zeros_like(num), where=denominator_heatmap != 0)
@@ -206,9 +210,10 @@ def update_map(sensor_data_key = 'temperatura', display_debug = False):
     kernel = np.ones((3, 3), np.uint8)
     gray_image = cv2.erode(gray_image, kernel, iterations=1)
     
-    # plt.figure("Before rescalation")
-    # plt.imshow(integrated_heatmap)
-    # plt.colorbar()
+    if display_debug:
+        plt.figure("Before rescalation")
+        plt.imshow(integrated_heatmap)
+        plt.colorbar()
 
     min_temp = min(values.values())-1
     max_temp = max(values.values())+1
@@ -220,11 +225,10 @@ def update_map(sensor_data_key = 'temperatura', display_debug = False):
                                                 new_min = 0, new_max=255,
                                                 mask = gray_image)
 
-    # plt.figure("After rescalation")
-    # plt.imshow(integrated_heatmap)
-    # plt.colorbar()
-
-    # plt.show()
+    if display_debug:
+        plt.figure("After rescalation")
+        plt.imshow(integrated_heatmap)
+        plt.colorbar()
 
     integrated_heatmap = cv2.applyColorMap(integrated_heatmap, range_configuration[sensor_data_key]['colormap'])
     integrated_heatmap[gray_image<127] = (0,0,0)
@@ -241,8 +245,9 @@ def update_map(sensor_data_key = 'temperatura', display_debug = False):
         # cv2.imshow(f'dem {sensor_data_key}', dem)
         # cv2.imshow(f'Map {sensor_data_key}', gray_image)
         cv2.pollKey()
+        plt.show()
     
-    # integrated_heatmap = cv2.rotate(integrated_heatmap, cv2.ROTATE_90_COUNTERCLOCKWISE)
+    integrated_heatmap = cv2.rotate(integrated_heatmap, cv2.ROTATE_90_COUNTERCLOCKWISE)
     return integrated_heatmap
 
 
