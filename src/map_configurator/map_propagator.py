@@ -18,7 +18,9 @@ if __name__ == "__main__":
 from yaml_utils import parseYaml, dumpYaml
 
 map_cfg = "./config/map_config.yaml"
-map_im = "./media/map.png"
+media_path = "./media/"
+heatmap_intermediate_path = f"{media_path}/raw_heatmaps/"
+map_im = f"{media_path}/map.png"
 grid_size_cm = 4
 
 def scale_map(occupancy_map, scale_factor):
@@ -171,7 +173,7 @@ def process_sensor(sensor_data):
     key, data, config_data, scaled_map, map_im, scale_factor, grid_size_cm = sensor_data
     start_point = scale_point(data['position_px'], scale_factor)
     distances = get_distance_map(map=scaled_map, start_node=start_point, distance_between_nodes=grid_size_cm, 
-                         key=key, scale_factor=scale_factor, output_path=map_im.replace('.png', f'_{key}_debug.png'))
+                         key=key, scale_factor=scale_factor, output_path=os.path.joint(heatmap_intermediate_path, f'map_{key}_debug.png'))
     distance_image_bgr = distances_to_image(distances, scaled_map)
 
     # Mostrar la imagen
@@ -222,7 +224,30 @@ def propagateHeatmaps():
 
     print("Finished heatmap propagation")
 
+def computePreprocessedHeatmaps():
+    heatmap_files_path = []
+    for file in os.listdir(heatmap_intermediate_path):
+        if file.startswith('map_') and file.endswith('.png') and\
+           'debug' not in file:
+            heatmap_files_path.append(os.path.join(media_path+file))
+    
+    first_heatmap = next(iter(heatmap_dict.values()))
+    denominator_heatmap = np.zeros_like(first_heatmap, dtype=float)
+
+    for heatmap_path in heatmap_files_path:
+        heatmap = cv2.imread(heatmap_path, cv2.IMREAD_GRAYSCALE)
+
+        heatmap = (heatmap**5)
+        denominator_heatmap = denominator_heatmap + (heatmap**5)
+
+        output_path = heatmap_path.replace(heatmap_intermediate_path,media_path)
+        numpy.save(output_path, heatmap)
+
+    numpy.save(os.path.join(media_path, 'denominator'), denominator_heatmap)
+    
+
 
 if __name__ == "__main__":
-    propagateHeatmaps()
+    # propagateHeatmaps()
+    computePreprocessedHeatmaps()
     cv2.destroyAllWindows()

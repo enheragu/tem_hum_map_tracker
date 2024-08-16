@@ -4,7 +4,6 @@
 import os
 
 import numpy as np
-import scipy.interpolate
 import cv2
 
 import matplotlib.pyplot as plt
@@ -27,6 +26,9 @@ range_configuration = {
 
 def setup_map_cfg_path(map_config):
     global default_map_config_path, data_dict
+
+    log_screen(f"Initialize configuration from {map_config}", level = "INFO", notify = False)
+
     default_map_config_path = map_config
 
     if data_dict is None:
@@ -97,7 +99,9 @@ def plotOriginalData(img, positions, values, units = ""):
 def load_temperature_heatmaps(media_path):
     global heatmap_dict, original_image
     global default_media_path, default_map_path
+    global data_dict
 
+    log_screen(f"Updating heatmap templates from {media_path}:", level = "INFO", notify = False)
     if media_path is not None:
         default_media_path = media_path
     else:
@@ -116,7 +120,11 @@ def load_temperature_heatmaps(media_path):
     for heatmap_path in heatmap_files_path:
         key = heatmap_path.split('/')[-1].replace('map_','').replace('.png',"")
         heatmap_dict[key] = cv2.imread(heatmap_path, cv2.IMREAD_GRAYSCALE)
+        log_screen(f"\t· Parsed {key} heatmap", level = "INFO", notify = False)
 
+    for sensor_key in data_dict['sensors'].keys():
+        if sensor_key not in heatmap_dict:
+            log_screen(f"Sensor key from config could not find the heatmap for the integration: {sensor_key}", level = "WARN", notify = False)
 
 def rescaleChannel(channel, max_value, new_max):
     channel = new_max * (channel / max_value)
@@ -236,7 +244,7 @@ def update_map(sensor_data_key = 'temperatura', display_debug = False):
         # cv2.imshow(f'Map {sensor_data_key}', gray_image)
         cv2.pollKey()
     
-    integrated_heatmap = cv2.rotate(integrated_heatmap, cv2.ROTATE_90_COUNTERCLOCKWISE)
+    # integrated_heatmap = cv2.rotate(integrated_heatmap, cv2.ROTATE_90_COUNTERCLOCKWISE)
     return integrated_heatmap
 
 

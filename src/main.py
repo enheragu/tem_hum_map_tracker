@@ -26,9 +26,9 @@ def getUserOptionsAndSetup():
 
     ## Parse arguments and set them to be used
     parser = argparse.ArgumentParser(description='This script monitors a given web page to extract energy prices and send them through MQTT to a Home Assistant Broker')
-    parser.add_argument('-cfg', '--config', default = "./../config/config.yaml", help="Configuration file with user and topic. Default is set to config.yaml in config folder.")
-    parser.add_argument('-mcfg', '--map_config', default = "./../config/map_config.yaml", help="Configuration file with user and topic. Default is set to config.yaml in config folder.")
-    parser.add_argument('-mpath', '--media_path', default = "./../media", help="Path of map folder.")
+    parser.add_argument('-cfg', '--config', default = "./config/config.yaml", help="Configuration file with user and topic. Default is set to config.yaml in config folder.")
+    parser.add_argument('-mcfg', '--map_config', default = "./config/map_config.yaml", help="Configuration file with user and topic. Default is set to config.yaml in config folder.")
+    parser.add_argument('-mpath', '--media_path', default = "./media/", help="Path of map folder.")
     
     user_input = vars(parser.parse_args())
     
