@@ -7,6 +7,7 @@ import numpy as np
 import cv2
 
 import matplotlib.pyplot as plt
+from datetime import datetime
 
 from yaml_utils import parseYaml,dumpYaml
 from log_config import log_screen
@@ -164,9 +165,37 @@ def rescale_channel_minmax(channel, min_value=None, max_value=None, new_min=0, n
 
     return channel_rescaled, min_value, max_value
 
+def timestampToImage(image):
+    text = datetime.now().strftime("%Y-%m-%d | %H:%M:%S")
+
+    # Definir parámetros para la visualización
+    background_color = (0,0,0)  # Rojo en formato BGR
+    frame_color = (0,0,255)  # Rojo en formato BGR
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    font_scale = 2
+    font_color = (255,255,255)  # Blanco en formato BGR
+    font_thickness = 3
+
+    # Dibujar los puntos y etiquetas
+    text_size, _ = cv2.getTextSize(text, font, font_scale, font_thickness)
+    text_width, text_height = text_size
+    margin = 15
+    x = margin*3
+    y = image.shape[0] - margin - text_height
+
+    rect_top_left = (x -2, y - text_height - margin -2)
+    rect_bottom_right = (x + text_width + margin +2, y + margin +2)
+
+    cv2.rectangle(image, rect_top_left, rect_bottom_right, background_color, thickness=cv2.FILLED)
+    cv2.rectangle(image, rect_top_left, rect_bottom_right, frame_color, thickness=2)
+    
+    cv2.putText(image, text, (x, y), font, font_scale, font_color, font_thickness)
+    return image
+
+
 def update_map(sensor_data_key = 'temperatura', display_debug = False):
     global heatmap_dict, original_image, data_dict, temperature_range, denominator_heatmap
-    final_scaling = 3
+    final_scaling = 4
 
     positions = {}
     values = {}
@@ -248,6 +277,8 @@ def update_map(sensor_data_key = 'temperatura', display_debug = False):
         plt.show()
     
     integrated_heatmap = cv2.rotate(integrated_heatmap, cv2.ROTATE_90_COUNTERCLOCKWISE)
+    integrated_heatmap = timestampToImage(integrated_heatmap)
+
     return integrated_heatmap
 
 
