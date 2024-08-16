@@ -5,10 +5,11 @@ import os
 
 # User interface
 import argparse
+import time
 
 
-from map_handler import setup_map_cfg_path
-from mqtt_node import subscribe_client, stop_client
+from map_handler import setup_map_cfg_path, update_map, load_temperature_heatmaps
+from mqtt_node import subscribe_client, stop_client, mqttMapsDispatchMessage
 from log_config import DEFAULT_LOG_PATH, DEFAULT_LOG_TOPIC, DEFAULT_LOG_LEVEL, configureLogger, log_screen
 from yaml_utils import parseYaml
 
@@ -27,6 +28,8 @@ def getUserOptionsAndSetup():
     parser = argparse.ArgumentParser(description='This script monitors a given web page to extract energy prices and send them through MQTT to a Home Assistant Broker')
     parser.add_argument('-cfg', '--config', default = "./../config/config.yaml", help="Configuration file with user and topic. Default is set to config.yaml in config folder.")
     parser.add_argument('-mcfg', '--map_config', default = "./../config/map_config.yaml", help="Configuration file with user and topic. Default is set to config.yaml in config folder.")
+    parser.add_argument('-mpath', '--media_path', default = "./../media", help="Path of map folder.")
+    
     user_input = vars(parser.parse_args())
     
     # Parse configuration
@@ -44,7 +47,7 @@ def getUserOptionsAndSetup():
 
     configureLogger(LOGGING_FILE_PATH)
 
-    return data, user_input["map_config"]
+    return data, user_input["map_config"], user_input['media_path']
 
 
 ##############
@@ -53,14 +56,21 @@ def getUserOptionsAndSetup():
 
 if __name__ == "__main__":
     log_screen("Parse user options", level = "INFO")
-    data, map_config = getUserOptionsAndSetup()
+    data, map_config, media_path = getUserOptionsAndSetup()
 
     setup_map_cfg_path(map_config)
     subscribe_client(data)
+    load_temperature_heatmaps(media_path)
     
+    time.sleep(5) # Let it rest a bit
     try:
         while True:
-            pass
+            temperatura_map = update_map('temperatura')
+            humedad_map = update_map('humedad')
+
+            mqttMapsDispatchMessage(temperatura_map, humedad_map)
+            time.sleep(360) # Let it rest a bit
+            
     except KeyboardInterrupt:
         print("Keyboard Interruption :)")
         

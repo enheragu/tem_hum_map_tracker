@@ -22,6 +22,8 @@ def parseYaml(file_path):
 # Check if all values in the dictionary/list are of basic types
 def is_basic_types(values):
     basic_types = (int, str, bool, float)
+    if all(value is None for value in values):
+        return True
     return all(isinstance(value, basic_types) for value in values)
 
 # Custom representation function for dictionaries

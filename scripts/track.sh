@@ -18,9 +18,19 @@ export SCRIPT_PATH=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
 echo "[track.sh] Activate venv"
 cd $SCRIPT_PATH/../ && source ./venv/bin/activate
 
+
+# Check if running
+ps -aux | grep -v grep  | grep "python3 ./src/main.py -cfg ./config/config.yaml -mcfg ./config/map_config.yaml -mpath ./media/" > /dev/null
+if [ $? -eq 0 ]; then
+  echo "Process is running."
+else
+  echo "Process is not running."
+fi
+
+
 ## Run checkin with input options
 echo "[track.sh] Run script"
-cd $SCRIPT_PATH/../ && ./src/main.py "$@" -cfg ./config/config.yaml -mcfg ./config/map_config.yaml
+cd $SCRIPT_PATH/../ && ./src/main.py "$@" -cfg ./config/config.yaml -mcfg ./config/map_config.yaml -mpath ./media/
 
 echo "[track.sh] end"
 date

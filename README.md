@@ -61,6 +61,8 @@ The default config file is set to be in `./config/config.yaml`. If no argument i
 
 ## Execution
 
+
+There are different scripts to be used:
 ```
 usage: main.py [-h] 
 

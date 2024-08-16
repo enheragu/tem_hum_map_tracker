@@ -4,4 +4,7 @@ pyyaml
 requests
 cmake
 numpy
+scipy
+matplotlib
+tqdm
 # opencv-python
