@@ -233,23 +233,24 @@ def computePreprocessedHeatmaps():
            'debug' not in file:
             heatmap_files_path.append(os.path.join(heatmap_intermediate_path,file))
     
-    denominator_heatmap = None
+    # Once loaded denominator is not well interpreted and map is corrupted :|
+    # denominator_heatmap = None
 
     for heatmap_path in heatmap_files_path:
         heatmap = cv2.imread(heatmap_path, cv2.IMREAD_GRAYSCALE).astype(np.uint16)
         
-        if denominator_heatmap is None:
-            denominator_heatmap = np.zeros_like(heatmap, dtype=np.uint16)
+        # if denominator_heatmap is None:
+            # denominator_heatmap = np.zeros_like(heatmap, dtype=np.uint16)
 
         # Power is applied to enhance influence of the sensor in its proximal area
         heatmap = (heatmap**2)
-        denominator_heatmap = denominator_heatmap + (heatmap**2)
+        # denominator_heatmap = denominator_heatmap + (heatmap**2)
 
         output_path = heatmap_path.replace(heatmap_intermediate_path,media_path)
         np.save(output_path, heatmap)
 
     print(f"Computed denominator from heatmaps: {heatmap_files_path}")
-    np.save(os.path.join(media_path, 'denominator'), denominator_heatmap)
+    # np.save(os.path.join(media_path, 'denominator'), denominator_heatmap)
     
 
 
