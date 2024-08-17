@@ -8,7 +8,7 @@ import threading
 import cv2
 
 import matplotlib.pyplot as plt
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from yaml_utils import parseYaml,dumpYaml
 from log_config import log_screen
@@ -21,6 +21,9 @@ default_map_config_path = "./../config/map_config.yaml"
 default_media_path = "./../media/"
 default_map_path = f"{default_media_path}map.png"
 
+# Min delay. If sensor data is older than X min from now it is discarded and
+# shown as an error
+max_time_sensor_min = 10
 lock = threading.Lock()
 
 range_configuration = {
@@ -212,8 +215,14 @@ def update_map(sensor_data_key = 'temperatura', display_debug = False):
         positions[sensor_key] = [sensor_data['position_px'][0]*final_scaling,
                                  sensor_data['position_px'][1]*final_scaling,
                                  sensor_data['position_px'][2]*final_scaling]
-        values[sensor_key] = sensor_data[sensor_data_key]['state']
-
+        
+        time_sensor = sensor_data[sensor_data_key]['last_update']
+        time_sensor = datetime.strptime(time_sensor, '%Y-%m-%d %H:%M:%S.%f')
+        current_time = datetime.now()
+        if current_time-time_sensor < timedelta(minutes=max_time_sensor_min):
+            values[sensor_key] = sensor_data[sensor_data_key]['state']
+        else:
+            values[sensor_key] = ' ~~ '
 
     first_heatmap = next(iter(heatmap_dict.values()))
     integrated_heatmap = np.zeros_like(first_heatmap, dtype=np.float32)
@@ -222,6 +231,13 @@ def update_map(sensor_data_key = 'temperatura', display_debug = False):
     num = np.zeros_like(first_heatmap, dtype=np.float32)
     denominator_heatmap = np.zeros_like(first_heatmap, dtype=np.float32)
     for sensor_key, sensor_data in get_data_dict()['sensors'].items():
+        
+        time_sensor = sensor_data[sensor_data_key]['last_update']
+        time_sensor = datetime.strptime(time_sensor, '%Y-%m-%d %H:%M:%S.%f')
+        current_time = datetime.now()
+        if current_time-time_sensor > timedelta(minutes=max_time_sensor_min):
+            continue
+
         value = sensor_data[sensor_data_key]['state']
         heatmap = heatmap_dict[sensor_key].copy().astype(np.float32)
         num = num + heatmap*value
@@ -252,8 +268,12 @@ def update_map(sensor_data_key = 'temperatura', display_debug = False):
         plt.imshow(integrated_heatmap)
         plt.colorbar()
 
-    min_temp = min(values.values())-1
-    max_temp = max(values.values())+1
+    values_num = [value for value in values.values() if isinstance(value, (int, float))]
+    if not values_num:
+        return rescale_channel_minmax(integrated_heatmap)
+    
+    min_temp = min(values_num)-1
+    max_temp = max(values_num)+1
 
     # integrated_heatmap = rescaleChannel(integrated_heatmap, np.max(integrated_heatmap), 255)
     integrated_heatmap, min_value, max_value = rescale_channel_minmax(channel=integrated_heatmap, 

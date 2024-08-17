@@ -18,7 +18,7 @@ from map_handler import update_data
 client = None
 
 def getTimetagNow():
-    return datetime.utcnow().strftime('%F %T.%f')[:-3]
+    return datetime.now().strftime('%F %T.%f')[:-3]
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
