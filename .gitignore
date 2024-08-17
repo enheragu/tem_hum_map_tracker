@@ -1,3 +1,6 @@
+# Ignore media path with maps
+media/
+
 # Ignore possible vevn python stuff
 bin/
 include/

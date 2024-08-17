@@ -4,6 +4,7 @@
 import os
 
 import numpy as np
+import threading 
 import cv2
 
 import matplotlib.pyplot as plt
@@ -20,6 +21,8 @@ default_map_config_path = "./../config/map_config.yaml"
 default_media_path = "./../media/"
 default_map_path = f"{default_media_path}map.png"
 
+lock = threading.Lock()
+
 range_configuration = {
     'temperatura': {'range': [25,30], 'units': "deg", 'colormap':cv2.COLORMAP_TURBO},
     # Inverted colormap for humidity, its nicer :)
@@ -33,8 +36,9 @@ def setup_map_cfg_path(map_config):
 
     default_map_config_path = map_config
 
-    if data_dict is None:
-        data_dict = parseYaml(default_map_config_path)
+    with lock:
+        if data_dict is None:
+            data_dict = parseYaml(default_map_config_path)
 
 def update_dict(base_dict, new_dict):
     for clave, valor in new_dict.items():
@@ -48,8 +52,16 @@ def update_data(data_new):
     global default_map_config_path
     global data_dict
 
-    update_dict(data_dict, data_new)
+    with lock:
+        update_dict(data_dict, data_new)
     dumpYaml(default_map_config_path, data_dict)
+
+def get_data_dict():
+    global data_dict
+
+    with lock:
+        data = data_dict.copy()
+        return data
 
 
 def plotOriginalData(img, positions, values, units = ""):
@@ -98,7 +110,7 @@ def plotOriginalData(img, positions, values, units = ""):
 def load_temperature_heatmaps(media_path):
     global heatmap_dict, original_image
     global default_media_path, default_map_path
-    global data_dict, denominator_heatmap
+    global denominator_heatmap
 
     log_screen(f"Updating heatmap templates from {media_path}:", level = "INFO", notify = False)
     if media_path is not None:
@@ -123,7 +135,7 @@ def load_temperature_heatmaps(media_path):
 
     # denominator_heatmap = np.load(os.path.join(media_path,'denominator.npy'))
 
-    for sensor_key in data_dict['sensors'].keys():
+    for sensor_key in get_data_dict()['sensors'].keys():
         if sensor_key not in heatmap_dict:
             log_screen(f"Sensor key from config could not find the heatmap for the integration: {sensor_key}", level = "WARN", notify = False)
 
@@ -191,12 +203,12 @@ def timestampToImage(image):
 
 
 def update_map(sensor_data_key = 'temperatura', display_debug = False):
-    global heatmap_dict, original_image, data_dict, temperature_range, denominator_heatmap
+    global heatmap_dict, original_image, temperature_range, denominator_heatmap
     final_scaling = 4
 
     positions = {}
     values = {}
-    for sensor_key, sensor_data in data_dict['sensors'].items():
+    for sensor_key, sensor_data in get_data_dict()['sensors'].items():
         positions[sensor_key] = [sensor_data['position_px'][0]*final_scaling,
                                  sensor_data['position_px'][1]*final_scaling,
                                  sensor_data['position_px'][2]*final_scaling]
@@ -209,7 +221,7 @@ def update_map(sensor_data_key = 'temperatura', display_debug = False):
     # Accumulates numerator and denominator to be averaged later
     num = np.zeros_like(first_heatmap, dtype=np.float32)
     denominator_heatmap = np.zeros_like(first_heatmap, dtype=np.float32)
-    for sensor_key, sensor_data in data_dict['sensors'].items():
+    for sensor_key, sensor_data in get_data_dict()['sensors'].items():
         value = sensor_data[sensor_data_key]['state']
         heatmap = heatmap_dict[sensor_key].copy().astype(np.float32)
         num = num + heatmap*value
