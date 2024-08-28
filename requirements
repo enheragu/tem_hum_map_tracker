@@ -2,6 +2,7 @@ wheel
 paho-mqtt
 pyyaml
 requests
+sparse
 numpy==1.24.4 # needed version to comply with opencv apt installed
 matplotlib
 # cmake
