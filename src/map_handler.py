@@ -3,7 +3,8 @@
 
 import os
 
-import sparse, numpy as np
+# import sparse,
+import numpy as np
 import threading 
 import cv2
 
