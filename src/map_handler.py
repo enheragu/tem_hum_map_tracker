@@ -13,11 +13,13 @@ from datetime import datetime, timedelta
 from yaml_utils import parseYaml,dumpYaml
 from log_config import log_screen
 
+config_dict = None
 data_dict = None
 heatmap_dict = {}
 original_image = None
 denominator_heatmap = None
 default_map_config_path = "./../config/map_config.yaml"
+default_map_data_path = "./../config/map_data.yaml"
 default_media_path = "./../media/"
 default_map_path = f"{default_media_path}map.png"
 
@@ -33,18 +35,25 @@ range_configuration = {
 }
 
 def setup_map_cfg_path(map_config):
-    global default_map_config_path, data_dict
+    global default_map_config_path, default_map_data_path, data_dict, config_dict
 
     log_screen(f"Initialize configuration from {map_config}", level = "INFO", notify = False)
 
     default_map_config_path = map_config
+    default_map_data_path = os.path.join(os.path.dirname(map_config), 'map_data.yaml')
 
     with lock:
+        if config_dict is None:
+            config_dict = {}
+        parsed_data = parseYaml(default_map_config_path)
+        update_dict(config_dict, parsed_data)
+
+
         if data_dict is None:
             data_dict = {}
-
-        parsed_data = parseYaml(default_map_config_path)
+        parsed_data = parseYaml(default_map_data_path)
         update_dict(data_dict, parsed_data)
+        update_dict(data_dict, config_dict)
 
 def update_dict(base_dict, new_dict):
     for clave, valor in new_dict.items():
@@ -55,12 +64,12 @@ def update_dict(base_dict, new_dict):
     return base_dict
 
 def update_data(data_new):
-    global default_map_config_path
+    global default_map_data_path
     global data_dict
 
     with lock:
         update_dict(data_dict, data_new)
-    dumpYaml(default_map_config_path, data_dict)
+    dumpYaml(default_map_data_path, data_dict)
 
 def get_data_dict():
     global data_dict
