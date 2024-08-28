@@ -3,7 +3,7 @@
 
 import os
 
-import numpy as np
+import sparse, numpy as np
 import threading 
 import cv2
 
@@ -41,7 +41,10 @@ def setup_map_cfg_path(map_config):
 
     with lock:
         if data_dict is None:
-            data_dict = parseYaml(default_map_config_path)
+            data_dict = {}
+
+        parsed_data = parseYaml(default_map_config_path)
+        update_dict(data_dict, parsed_data)
 
 def update_dict(base_dict, new_dict):
     for clave, valor in new_dict.items():
@@ -63,8 +66,12 @@ def get_data_dict():
     global data_dict
 
     with lock:
-        data = data_dict.copy()
-        return data
+        if data_dict is not None:
+            data = data_dict.copy()
+            return data
+        else:
+            data_dict = {}
+            return {}
 
 
 def plotOriginalData(img, positions, values, units = ""):
@@ -134,7 +141,16 @@ def load_temperature_heatmaps(media_path):
     for heatmap_path in heatmap_files_path:
         key = heatmap_path.split('/')[-1].replace('map_','').replace('.png.npy',"")
         heatmap_dict[key] = np.load(heatmap_path)
-        log_screen(f"\t· Parsed {key} heatmap", level = "INFO", notify = False)
+
+        log_extra = "as np array."
+        ## Right now sparse takes more memory in the end in the whole program.
+        ## Wait to check when more maps have much black parts
+        # if heatmap_dict[key].nbytes>sparse.COO(heatmap_dict[key]).nbytes:
+        #     heatmap_dict[key] = sparse.COO(heatmap_dict[key])
+        #     log_extra = "as sparse array."
+        
+
+        log_screen(f"\t· Parsed {key} heatmap {log_extra}", level = "INFO", notify = False)
 
     # denominator_heatmap = np.load(os.path.join(media_path,'denominator.npy'))
 
