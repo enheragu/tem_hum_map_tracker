@@ -72,7 +72,7 @@ def click_event(event, x, y, flags, param):
                 print(f"Distance in pixels: {distance_pixels}")
                 print(f"Distance in cm: {distance_cm}")
                 scale_data = {
-                    'distance_pixels': int(distance_pixels*(1-visualiation_scale)),
+                    'distance_pixels': int(distance_pixels*(1+visualiation_scale)),
                     'distance_cm': distance_cm
                 }
                 configuration_data['scale'] = scale_data
@@ -85,8 +85,8 @@ def click_event(event, x, y, flags, param):
             item_key = item_keys[current_item_index]
             if not 'position_px' in items[item_key]:
                 items[item_key]['position_px'] = [None,None,None]
-            items[item_key]['position_px'][0] = int(x*(1-visualiation_scale))
-            items[item_key]['position_px'][1] = int(y*(1-visualiation_scale))
+            items[item_key]['position_px'][0] = int(x*(1+visualiation_scale))
+            items[item_key]['position_px'][1] = int(y*(1+visualiation_scale))
             current_item_index += 1
             positioning_printed = False
     if event == cv2.EVENT_RBUTTONDOWN and (flags & cv2.EVENT_FLAG_SHIFTKEY):

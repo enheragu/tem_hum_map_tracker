@@ -258,6 +258,6 @@ def computePreprocessedHeatmaps():
 
 
 if __name__ == "__main__":
-    # propagateHeatmaps()
+    propagateHeatmaps()
     computePreprocessedHeatmaps()
     cv2.destroyAllWindows()

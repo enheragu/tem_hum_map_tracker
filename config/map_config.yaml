@@ -31,8 +31,8 @@ sensors:
     position_px: [460, 1161, 26]
     position_z_cm: 64
   th_plantitas_mesa:
-    position_px: [29, 27, 17]
-    position_z_cm: 42
+    position_px: [122, 118, 17]
+    position_z_cm: 95
   th_plantitas_salon:
     position_px: [255, 501, 30]
     position_z_cm: 73
