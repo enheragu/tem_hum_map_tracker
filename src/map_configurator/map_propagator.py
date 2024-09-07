@@ -23,7 +23,7 @@ map_cfg = "./config/map_config.yaml"
 media_path = "./media/"
 heatmap_intermediate_path = f"{media_path}/raw_heatmaps/"
 map_im = f"{media_path}/map.png"
-grid_size_cm = 8
+grid_size_cm = 20
 
 def scale_map(occupancy_map, scale_factor):
     map = occupancy_map.copy()
@@ -106,7 +106,7 @@ def get_distance_map(map, start_node, distance_between_nodes, key = "",
         
         # Actualizar distancias a los vecinos
         for neighbor in neighbors:
-            new_distance = distances_local[current_node] + 1 # If using 8 -> distance(current_node,neighbor) # Increment one pixel
+            new_distance = distances_local[current_node] + 2 # If using 8 -> distance(current_node,neighbor) # Increment one pixel
             #distance_between_nodes
             # Adds some epsilon to comparison
             if new_distance < distances_local[neighbor]-new_distance*0.1:
@@ -243,11 +243,14 @@ def computePreprocessedHeatmaps():
             # denominator_heatmap = np.zeros_like(heatmap, dtype=np.uint16)
 
         # Power is applied to enhance influence of the sensor in its proximal area
-        heatmap = (heatmap**2)
+        heatmap = heatmap*heatmap # more than square saturates map
         # denominator_heatmap = denominator_heatmap + (heatmap**2)
 
         output_path = heatmap_path.replace(heatmap_intermediate_path,media_path)
-        np.save(output_path, heatmap)
+
+        heatmap = rescaleChannel(heatmap, np.max(heatmap), 255)
+        cv2.imwrite(output_path, heatmap)
+        # np.save(output_path, heatmap)
 
     print(f"Computed denominator from heatmaps: {heatmap_files_path}")
     # np.save(os.path.join(media_path, 'denominator'), denominator_heatmap)
@@ -255,6 +258,6 @@ def computePreprocessedHeatmaps():
 
 
 if __name__ == "__main__":
-    propagateHeatmaps()
+    # propagateHeatmaps()
     computePreprocessedHeatmaps()
     cv2.destroyAllWindows()

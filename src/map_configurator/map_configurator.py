@@ -35,6 +35,10 @@ current_item_index = 0
 item_keys = list(items.keys())
 positioning_printed = False
 
+# Scale to fit image in screen and be able to point locations and stuff
+visualiation_scale = 0.55
+
+cv2.namedWindow("Image", cv2.WINDOW_FULLSCREEN) 
 
 def ask_yes_no(question):
     """
@@ -57,7 +61,7 @@ def get_distance(p1, p2):
 
 
 def click_event(event, x, y, flags, param):
-    global current_item_index, items, item_keys, image, positioning_printed, reference_points, distance_cm
+    global current_item_index, items, item_keys, image, positioning_printed, reference_points, distance_cm, visualiation_scale
     if event == cv2.EVENT_LBUTTONDOWN and (flags & cv2.EVENT_FLAG_SHIFTKEY):
         if len(reference_points) < 2:
             reference_points.append((x, y))
@@ -68,19 +72,21 @@ def click_event(event, x, y, flags, param):
                 print(f"Distance in pixels: {distance_pixels}")
                 print(f"Distance in cm: {distance_cm}")
                 scale_data = {
-                    'distance_pixels': distance_pixels,
+                    'distance_pixels': int(distance_pixels*(1-visualiation_scale)),
                     'distance_cm': distance_cm
                 }
                 configuration_data['scale'] = scale_data
                 cv2.line(image_original, reference_points[0], reference_points[1], (0, 255, 0), 2)
-                cv2.imshow("Image", image_original)
+                
+                visualization = cv2.resize(image_original, (0,0), fx=visualiation_scale, fy=visualiation_scale)
+                cv2.imshow("Image", visualization)
 
         else:
             item_key = item_keys[current_item_index]
             if not 'position_px' in items[item_key]:
                 items[item_key]['position_px'] = [None,None,None]
-            items[item_key]['position_px'][0] = x
-            items[item_key]['position_px'][1] = y
+            items[item_key]['position_px'][0] = int(x*(1-visualiation_scale))
+            items[item_key]['position_px'][1] = int(y*(1-visualiation_scale))
             current_item_index += 1
             positioning_printed = False
     if event == cv2.EVENT_RBUTTONDOWN and (flags & cv2.EVENT_FLAG_SHIFTKEY):
@@ -97,7 +103,7 @@ def click_event(event, x, y, flags, param):
 def configureSensorAndMapPosition():
     print("Start map and sensor configuration")
     global image, current_item_index, items, item_keys, image, positioning_printed, reference_points, distance_cm
-
+    global visualiation_scale
     # Create the window before setting the mouse callback
     cv2.namedWindow("Image")
     cv2.setMouseCallback("Image", click_event)
@@ -105,8 +111,9 @@ def configureSensorAndMapPosition():
     # Wait for the user to set the reference points
     print("Please select two reference points on the image and provide the real distance between them.")
 
-    while len(reference_points) < 2:
-        cv2.imshow("Image", image)
+    while len(reference_points) < 2:  
+        visualization = cv2.resize(image, (0,0), fx=visualiation_scale, fy=visualiation_scale)
+        cv2.imshow("Image", visualization)
         key = cv2.waitKey(1) & 0xFF
         if key in [ord('q'), ord('Q'), 27]:  # 27 is the ASCII code for Esc
             break
@@ -138,7 +145,9 @@ def configureSensorAndMapPosition():
                 cv2.putText(image, f"{item_key} ({x},{y})", (x + 10, y), cv2.FONT_HERSHEY_SIMPLEX, text_scale, prev_color, text_thickness, cv2.LINE_AA)
 
         cv2.putText(image, f"Click position for: {item_key}", (5, 14), cv2.FONT_HERSHEY_SIMPLEX, text_scale, text_color, text_thickness, cv2.LINE_AA)
-        cv2.imshow("Image", image)
+        
+        visualization = cv2.resize(image, (0,0), fx=visualiation_scale, fy=visualiation_scale)
+        cv2.imshow("Image", visualization)
 
         key = cv2.pollKey() & 0xFF
         if key in [ord('q'), ord('Q'), 27]:  # 27 is the ASCII code for Esc

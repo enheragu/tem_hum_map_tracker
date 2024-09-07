@@ -57,11 +57,12 @@ def setup_map_cfg_path(map_config):
         update_dict(data_dict, config_dict)
 
 def update_dict(base_dict, new_dict):
-    for clave, valor in new_dict.items():
-        if isinstance(valor, dict):
-            base_dict[clave] = update_dict(base_dict.get(clave, {}), valor)
-        else:
-            base_dict[clave] = valor
+    if new_dict is not None:
+        for clave, valor in new_dict.items():
+            if isinstance(valor, dict):
+                base_dict[clave] = update_dict(base_dict.get(clave, {}), valor)
+            else:
+                base_dict[clave] = valor
     return base_dict
 
 def update_data(data_new):
@@ -127,7 +128,7 @@ def plotOriginalData(img, positions, values, units = ""):
         
     return output_img
 
-def load_temperature_heatmaps(media_path):
+def load_temperature_heatmaps(media_path, display_debug = False):
     global heatmap_dict, original_image
     global default_media_path, default_map_path
     global denominator_heatmap
@@ -144,15 +145,17 @@ def load_temperature_heatmaps(media_path):
 
     heatmap_files_path = []
     for file in os.listdir(media_path):
-        if file.startswith('map_') and file.endswith('.png.npy') and\
+        if file.startswith('map_') and file.endswith('.png') and\
            'debug' not in file:
             heatmap_files_path.append(os.path.join(media_path,file))
     
     for heatmap_path in heatmap_files_path:
-        key = heatmap_path.split('/')[-1].replace('map_','').replace('.png.npy',"")
-        heatmap_dict[key] = np.load(heatmap_path)
+        key = heatmap_path.split('/')[-1].replace('map_','').replace('.png',"")
+        log_extra = " as cv image."
+        heatmap_dict[key] = cv2.imread(heatmap_path, cv2.IMREAD_GRAYSCALE)
+        # heatmap_dict[key] = np.load(heatmap_path)
 
-        log_extra = "as np array."
+        # log_extra = "as np array."
         ## Right now sparse takes more memory in the end in the whole program.
         ## Wait to check when more maps have much black parts
         # if heatmap_dict[key].nbytes>sparse.COO(heatmap_dict[key]).nbytes:
@@ -161,6 +164,13 @@ def load_temperature_heatmaps(media_path):
         
 
         log_screen(f"\t· Parsed {key} heatmap {log_extra}", level = "INFO", notify = False)
+
+
+    if display_debug:
+        cv2.imshow(f"Heatmap {log_extra}: {next(iter(heatmap_dict.keys()))}",next(iter(heatmap_dict.values())))
+        plt.figure(f"Heatmap {log_extra}: {next(iter(heatmap_dict.keys()))}")
+        plt.imshow(next(iter(heatmap_dict.values())))
+        plt.colorbar()
 
     # denominator_heatmap = np.load(os.path.join(media_path,'denominator.npy'))
 
@@ -232,39 +242,42 @@ def timestampToImage(image):
 
 
 def update_map(sensor_data_key = 'temperatura', display_debug = False):
-    global heatmap_dict, original_image, temperature_range, denominator_heatmap
+    global heatmap_dict, original_image, temperature_range, denominator_heatmap, config_dict
     final_scaling = 4
 
     positions = {}
     values = {}
-    for sensor_key, sensor_data in get_data_dict()['sensors'].items():
-        positions[sensor_key] = [sensor_data['position_px'][0]*final_scaling,
-                                 sensor_data['position_px'][1]*final_scaling,
-                                 sensor_data['position_px'][2]*final_scaling]
+
+    sensor_key_list = [key for key in get_data_dict()['sensors'].keys() if key in config_dict['sensors'].keys()]
+
+    for sensor_key in sensor_key_list:
+        positions[sensor_key] = [config_dict['sensors'][sensor_key]['position_px'][0]*final_scaling,
+                                 config_dict['sensors'][sensor_key]['position_px'][1]*final_scaling,
+                                 config_dict['sensors'][sensor_key]['position_px'][2]*final_scaling]
         
-        time_sensor = sensor_data[sensor_data_key]['last_update']
+        time_sensor = get_data_dict()['sensors'][sensor_key][sensor_data_key]['last_update']
         time_sensor = datetime.strptime(time_sensor, '%Y-%m-%d %H:%M:%S.%f')
         current_time = datetime.now()
         if current_time-time_sensor < timedelta(minutes=max_time_sensor_min):
-            values[sensor_key] = sensor_data[sensor_data_key]['state']
+            values[sensor_key] = get_data_dict()['sensors'][sensor_key][sensor_data_key]['state']
         else:
             values[sensor_key] = ' ~~ '
 
     first_heatmap = next(iter(heatmap_dict.values()))
-    integrated_heatmap = np.zeros_like(first_heatmap, dtype=np.float32)
+    integrated_heatmap = np.zeros_like(first_heatmap).astype(np.float32)
 
     # Accumulates numerator and denominator to be averaged later
-    num = np.zeros_like(first_heatmap, dtype=np.float32)
-    denominator_heatmap = np.zeros_like(first_heatmap, dtype=np.float32)
-    for sensor_key, sensor_data in get_data_dict()['sensors'].items():
+    num = np.zeros_like(first_heatmap).astype(np.float32)
+    denominator_heatmap = np.zeros_like(first_heatmap).astype(np.float32)
+    for sensor_key in sensor_key_list:
         
-        time_sensor = sensor_data[sensor_data_key]['last_update']
+        time_sensor = get_data_dict()['sensors'][sensor_key][sensor_data_key]['last_update']
         time_sensor = datetime.strptime(time_sensor, '%Y-%m-%d %H:%M:%S.%f')
         current_time = datetime.now()
         if current_time-time_sensor > timedelta(minutes=max_time_sensor_min):
             continue
 
-        value = sensor_data[sensor_data_key]['state']
+        value = get_data_dict()['sensors'][sensor_key][sensor_data_key]['state']
         heatmap = heatmap_dict[sensor_key].copy().astype(np.float32)
         num = num + heatmap*value
         denominator_heatmap = denominator_heatmap + heatmap
