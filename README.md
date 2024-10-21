@@ -97,8 +97,8 @@ Making use of crontab the script can be executed every hour. Open crontab config
 
 To configure this setup these following lines are to be added to the end of the cron file:
 ```
-*/20 * * * * /home/pi/energy_price_tracker/scripts/track.sh >> /home/pi/energy_price_tracker/logs/log_crontab.log 2>&11
-00 23 * * 0 (cd /home/pi/energy_price_tracker/logs && rm log_crontab.log energy_script_log.log )
+*/20 * * * * /home/pi/tem_hum_map_tracker/scripts/track.sh >> /home/pi/tem_hum_map_tracker/logs/log_crontab.log 2>&11
+00 23 * * 0 (cd /home/pi/tem_hum_map_tracker/logs && rm log_crontab.log map_generation_log.log )
 ```
 
 > Nota: Making use of shell script `track.sh` the activation of the env is already handled. It also sotres a log file of the terminal output in case it is needed to check it.
