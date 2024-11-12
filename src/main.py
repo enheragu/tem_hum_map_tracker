@@ -64,13 +64,12 @@ if __name__ == "__main__":
     
     time.sleep(5) # Let it rest a bit
     try:
-        while True:
-            temperatura_map = update_map('temperatura')
-            humedad_map = update_map('humedad')
+        temperatura_map = update_map('temperatura')
+        humedad_map = update_map('humedad')
 
-            mqttMapsDispatchMessage(temperatura_map, humedad_map)
-            # time.sleep(300) # Let it rest a bit
-            time.sleep(5) # Let it rest a bit
+        mqttMapsDispatchMessage(temperatura_map, humedad_map)
+        # time.sleep(300) # Let it rest a bit
+        time.sleep(5) # Let it rest a bit
             
     except KeyboardInterrupt:
         print("Keyboard Interruption :)")

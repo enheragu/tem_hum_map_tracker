@@ -89,8 +89,8 @@ def plotOriginalData(img, positions, values, units = ""):
     # Convertir datos de posiciones y temperaturas a formato adecuado para OpenCV
     x = np.array([pos[0] for pos in positions.values()], dtype=int)
     y = np.array([pos[1] for pos in positions.values()], dtype=int)
-    sensor_values = np.array([values[sensor] for sensor in positions.keys()])
-    sensor_labels = list(positions.keys())
+    sensor_values = [values[sensor_label] for sensor_label in positions.keys() if sensor_label in values]
+    sensor_labels = [sensor_label for sensor_label in positions.keys() if sensor_label in values]
 
     # Copiar la imagen para no modificar la original
     output_img = img.copy()
@@ -109,7 +109,7 @@ def plotOriginalData(img, positions, values, units = ""):
         # cv2.circle(output_img, (x[i], y[i]), point_radius, point_color, -1)
         
         # Agregar la etiqueta de temperatura
-        text = f'{sensor_values[i]:.1f}'
+        text = f'{float(sensor_values[i]):.1f}' if not isinstance(sensor_values[i], str) else 'N/A'
         text_size, _ = cv2.getTextSize(text, font, font_scale, font_thickness)
         text_x = x[i] - text_size[0]//2
         text_y = y[i] - text_size[1]//2
@@ -248,12 +248,12 @@ def update_map(sensor_data_key = 'temperatura', display_debug = False):
     positions = {}
     values = {}
 
-    sensor_key_list = [key for key in get_data_dict()['sensors'].keys() if key in config_dict['sensors'].keys()]
+    sensor_key_list = [key for key in get_data_dict()['sensors'].keys() if key in config_dict['sensors'].keys() and sensor_data_key in get_data_dict()['sensors'][key]]
 
     for sensor_key in sensor_key_list:
         positions[sensor_key] = [config_dict['sensors'][sensor_key]['position_px'][0]*final_scaling,
-                                 config_dict['sensors'][sensor_key]['position_px'][1]*final_scaling,
-                                 config_dict['sensors'][sensor_key]['position_px'][2]*final_scaling]
+                                config_dict['sensors'][sensor_key]['position_px'][1]*final_scaling,
+                                config_dict['sensors'][sensor_key]['position_px'][2]*final_scaling]
         
         time_sensor = get_data_dict()['sensors'][sensor_key][sensor_data_key]['last_update']
         time_sensor = datetime.strptime(time_sensor, '%Y-%m-%d %H:%M:%S.%f')
@@ -262,7 +262,7 @@ def update_map(sensor_data_key = 'temperatura', display_debug = False):
             values[sensor_key] = get_data_dict()['sensors'][sensor_key][sensor_data_key]['state']
         else:
             values[sensor_key] = ' ~~ '
-
+        
     first_heatmap = next(iter(heatmap_dict.values()))
     integrated_heatmap = np.zeros_like(first_heatmap).astype(np.float32)
 
@@ -270,7 +270,6 @@ def update_map(sensor_data_key = 'temperatura', display_debug = False):
     num = np.zeros_like(first_heatmap).astype(np.float32)
     denominator_heatmap = np.zeros_like(first_heatmap).astype(np.float32)
     for sensor_key in sensor_key_list:
-        
         time_sensor = get_data_dict()['sensors'][sensor_key][sensor_data_key]['last_update']
         time_sensor = datetime.strptime(time_sensor, '%Y-%m-%d %H:%M:%S.%f')
         current_time = datetime.now()
@@ -281,7 +280,7 @@ def update_map(sensor_data_key = 'temperatura', display_debug = False):
         heatmap = heatmap_dict[sensor_key].copy().astype(np.float32)
         num = num + heatmap*value
         denominator_heatmap = denominator_heatmap + heatmap
-
+        
     if display_debug:
         plt.figure("Numerator")
         plt.imshow(num)
@@ -328,9 +327,9 @@ def update_map(sensor_data_key = 'temperatura', display_debug = False):
 
     integrated_heatmap = cv2.applyColorMap(integrated_heatmap, range_configuration[sensor_data_key]['colormap'])
     integrated_heatmap[gray_image<127] = (0,0,0)
-
+    
     integrated_heatmap = cv2.resize(integrated_heatmap, (integrated_heatmap.shape[1]*final_scaling, integrated_heatmap.shape[0]*final_scaling))
-    integrated_heatmap = plotOriginalData(integrated_heatmap,positions, values, units=range_configuration[sensor_data_key]['units'])
+    integrated_heatmap = plotOriginalData(img=integrated_heatmap, positions=positions, values=values, units=range_configuration[sensor_data_key]['units'])
     
     if display_debug:
         cv2.imshow(f'Heatmap {sensor_data_key}', integrated_heatmap)
